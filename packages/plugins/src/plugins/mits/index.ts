@@ -133,7 +133,7 @@ export const mitsPlugin: GeoLibrePlugin = {
   id: MITS_PLUGIN_ID,
   name: 'MITS Telemetry',
   version: '1.0.0',
-  activeByDefault: false,
+  activeByDefault: true,
 
   activate: (app: GeoLibreAppAPI) => {
     appRef = app;
