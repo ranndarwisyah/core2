@@ -44,5 +44,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260901-001 | Fix "Zoom Level Not Supported" on RainViewer radar layer | 2026-09-01 | 954de310 | [260901-001-fix-radar-maxzoom](./quick/260901-001-fix-radar-maxzoom/) |
+| 260901-002 | Fix river and irrigation line layers - proper colors and styling | 2026-09-01 | pending | [260901-002-fix-rivers-irrigation](./quick/260901-002-fix-rivers-irrigation/) |
 
-Last activity: 2026-09-01 - Completed quick task 260901-001: Fix "Zoom Level Not Supported" on RainViewer radar layer
+Last activity: 2026-09-01 - Completed quick task 260901-002: Fix river and irrigation line layers
