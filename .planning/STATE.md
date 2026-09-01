@@ -47,5 +47,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260901-002 | Fix river and irrigation line layers - proper colors and styling | 2026-09-01 | 5a11ba84 | [260901-002-fix-rivers-irrigation](./quick/260901-002-fix-rivers-irrigation/) |
 | 260901-003 | Replace hardcoded seed data with official external GeoJSON files | 2026-09-01 | 818466ae | [260901-003-integrate-external-seeds](./quick/260901-003-integrate-external-seeds/) |
 | 260901-004 | Make telemetry stations the top layer by default | 2026-09-01 | 673e78c9 | [260901-004-stations-top-layer](./quick/260901-004-stations-top-layer/) |
+| 260901-005 | Auto-activate MITS plugin on startup | 2026-09-01 | e8e9c526 | [260901-005-auto-activate-plugin](./quick/260901-005-auto-activate-plugin/) |
 
-Last activity: 2026-09-01 - Completed quick task 260901-004: Make telemetry stations the top layer by default
+Last activity: 2026-09-01 - Completed quick task 260901-005: Auto-activate MITS plugin on startup
