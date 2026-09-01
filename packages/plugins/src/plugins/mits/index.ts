@@ -47,12 +47,6 @@ function registerMapLayers(app: GeoLibreAppAPI): void {
   const stations = loadEntityStore<MitsStation>(STORAGE_KEYS.stations, SEED_STATIONS);
   const realtime = loadEntityStore<MitsRealtime>(STORAGE_KEYS.realtime, SEED_REALTIME);
 
-  const stationGeoJSON = buildStationGeoJSON(stations, realtime);
-  stationLayerId = app.addGeoJsonLayer?.(
-    t('layer_stations', getLocaleCode()),
-    stationGeoJSON,
-  ) ?? null;
-
   const riverGeoJSON = buildRiverGeoJSON(RC_RIVERLINE_DATA);
   riverLayerId = app.addGeoJsonLayer?.(
     t('layer_riverline2', getLocaleCode()),
@@ -74,6 +68,12 @@ function registerMapLayers(app: GeoLibreAppAPI): void {
       );
     }
   });
+
+  const stationGeoJSON = buildStationGeoJSON(stations, realtime);
+  stationLayerId = app.addGeoJsonLayer?.(
+    t('layer_stations', getLocaleCode()),
+    stationGeoJSON,
+  ) ?? null;
 }
 
 function removeMapLayers(app: GeoLibreAppAPI): void {
