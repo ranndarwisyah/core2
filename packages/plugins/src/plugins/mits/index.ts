@@ -76,11 +76,8 @@ function registerMapLayers(app: GeoLibreAppAPI): void {
   ) ?? null;
 }
 
-function removeMapLayers(app: GeoLibreAppAPI): void {
-  if (stationLayerId) app.removeLayer?.(stationLayerId);
-  if (riverLayerId) app.removeLayer?.(riverLayerId);
-  if (canalLayerId) app.removeLayer?.(canalLayerId);
-  if (radarLayerId) app.removeLayer?.(radarLayerId);
+function removeMapLayers(_app: GeoLibreAppAPI): void {
+  // Layers persist in the store; they can be removed manually from the Layers panel.
   stationLayerId = null;
   riverLayerId = null;
   canalLayerId = null;
