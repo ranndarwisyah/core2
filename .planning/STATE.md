@@ -49,5 +49,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260901-004 | Make telemetry stations the top layer by default | 2026-09-01 | 673e78c9 | [260901-004-stations-top-layer](./quick/260901-004-stations-top-layer/) |
 | 260901-005 | Auto-activate MITS plugin on startup | 2026-09-01 | e8e9c526 | [260901-005-auto-activate-plugin](./quick/260901-005-auto-activate-plugin/) |
 | 260901-006 | Fix TypeScript errors preventing MITS plugin from loading | 2026-09-01 | 7f0f7fc4 | [260901-006-fix-ts-errors](./quick/260901-006-fix-ts-errors/) |
+| 260901-007 | Fix plugin activation — activeByDefault plugins not activated | 2026-09-02 | 8f09e10e | [260901-007-fix-plugin-activation](./quick/260901-007-fix-plugin-activation/) |
 
-Last activity: 2026-09-01 - Completed quick task 260901-006: Fix TypeScript errors preventing MITS plugin from loading
+Last activity: 2026-09-02 - Completed quick task 260901-007: Fix plugin activation
