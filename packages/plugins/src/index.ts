@@ -56,6 +56,7 @@ export {
   type GeoLibreToolbarLabel,
 } from "./toolbar-menu-label";
 export { maplibreLayerControlPlugin } from "./plugins/layer-control";
+export { mitsPlugin, MITS_PLUGIN_ID } from "./plugins/mits";
 export { osmBasemapPlugin } from "./plugins/osm-basemap";
 export { cartoLightPlugin } from "./plugins/carto-light";
 export {

@@ -39,13 +39,12 @@ export class PluginManager {
     if (defaultPosition) {
       this.defaultMapControlPositions.set(plugin.id, defaultPosition);
     }
-    // activeByDefault only marks the plugin active; activate() is not called
-    // here because no app API is available at registration time. Such plugins
-    // must apply their initial side effects idempotently elsewhere (e.g. the
-    // layer control is added by MapController.init regardless of plugin state).
+    // activeByDefault adds the plugin to defaultActive only. activate() is not
+    // called here because no app API is available at registration time; the
+    // actual activate() call happens in restoreProjectState which runs once the
+    // app API is ready.
     if (plugin.activeByDefault) {
       this.defaultActive.add(plugin.id);
-      this.active.add(plugin.id);
     } else {
       this.defaultActive.delete(plugin.id);
     }
