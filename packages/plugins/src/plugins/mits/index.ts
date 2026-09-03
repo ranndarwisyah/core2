@@ -130,15 +130,20 @@ function buildToolbarMenu(app: GeoLibreAppAPI) {
 
 class BottomTabControl {
   private _container: HTMLDivElement | null = null;
+  private _host: HTMLDivElement | null = null;
   private _barEl: HTMLDivElement | null = null;
+  private _tabButtons: HTMLButtonElement[] = [];
+  private _tabIds: string[] = [];
   private _submenuEl: HTMLDivElement | null = null;
   private _activeTabId: string | null = null;
+  private _submenuForTabId: string | null = null;
+  private _outsideClickListener: (() => void) | null = null;
   private _cleanup: (() => void) | null = null;
 
   onAdd(map: maplibregl.Map) {
     const mapContainer = map.getContainer();
     this._container = document.createElement('div');
-    this._container.className = 'maplibregl-ctrl';
+    this._container.className = 'maplibregl-ctrl mits-bottom-tab-host';
     this._container.style.cssText = 'position:absolute;bottom:0;left:0;right:0;z-index:10;pointer-events:none;';
 
     const bar = document.createElement('div');
@@ -153,7 +158,7 @@ class BottomTabControl {
     const loc = () => getLocaleCode();
     const tabs = [
       { id: 'home', label: t('nav_home', loc()), onClick: () => openPanel('station-list') },
-      { id: 'about', label: t('nav_aboutus', loc()) || 'About Us', submenu: [
+      { id: 'about', label: t('nav_about', loc()) || 'About Us', submenu: [
         { id: 'overview', label: t('about_overview', loc()) || 'SHT MADA Overview', onClick: () => openPanel('quality-system') },
         { id: 'quality', label: t('about_quality', loc()) || 'MADA Quality System', onClick: () => openPanel('quality-system') },
         { id: 'plan', label: t('about_plan', loc()) || 'Pelan Kawasan Muda', onClick: () => openPanel('schematic') },
@@ -218,7 +223,7 @@ class BottomTabControl {
           return;
         }
         if (tab.submenu && tab.submenu.length > 0) {
-          this._toggleSubmenu(tab.submenu, btn);
+          this._toggleSubmenu(tab.id, tab.submenu, btn);
           return;
         }
         this._closeSubmenu();
@@ -227,43 +232,86 @@ class BottomTabControl {
         tab.onClick?.();
       });
       bar.appendChild(btn);
+      this._tabButtons.push(btn);
+      this._tabIds.push(tab.id);
     }
 
     this._container.appendChild(bar);
+    // Append the full-width bar directly to the map container, not to a
+    // maplibre control corner: the corner containers are sized/inset for small
+    // widgets (bottom-left has margin + max-width), so a full-width bar must
+    // live on the map root. We still return a small inert host to maplibre so
+    // addControl/removeControl bookkeeping (and onRemove) behave normally.
+    const host = document.createElement('div');
+    this._host = host;
     mapContainer.appendChild(this._container);
 
     this._cleanup = () => {
       this._closeSubmenu();
       this._barEl = null;
       this._container = null;
+      this._tabButtons = [];
+      this._tabIds = [];
     };
 
-    return this._container;
+    return host;
   }
 
   onRemove() {
     this._cleanup?.();
+    this._cleanup = null;
+    this._host?.remove();
+    this._host = null;
+    this._barEl = null;
+    this._submenuEl = null;
+    this._submenuForTabId = null;
     this._container?.remove();
+    this._container = null;
+    this._tabButtons = [];
+    this._tabIds = [];
   }
 
   private _closeSubmenu() {
     if (this._submenuEl) { this._submenuEl.remove(); this._submenuEl = null; }
+    this._submenuForTabId = null;
+    if (this._outsideClickListener) {
+      document.removeEventListener('click', this._outsideClickListener, true);
+      this._outsideClickListener = null;
+    }
   }
 
-  private _toggleSubmenu(items: { id: string; label: string; onClick?: () => void }[], anchor: HTMLElement) {
+  private _toggleSubmenu(
+    tabId: string,
+    items: { id: string; label: string; onClick?: () => void }[],
+    anchor: HTMLElement,
+  ) {
+    // Toggle: clicking the same parent tab again closes its submenu.
+    if (this._submenuForTabId === tabId) {
+      this._activeTabId = null;
+      this._updateStylesForSubmenu();
+      this._closeSubmenu();
+      return;
+    }
     this._closeSubmenu();
+    if (!this._container || !this._barEl) return;
     this._submenuEl = document.createElement('div');
+    // Anchor under the clicked tab: button.offsetLeft is relative to the host
+    // (the bar is static, so the positioned host is the offsetParent), minus
+    // the bar's horizontal scroll. Appended to the host — not the button or
+    // the bar — so the bar's overflow-x:auto cannot clip the upward menu and
+    // the menu is not squeezed to the tab's width.
+    const left = Math.max(0, anchor.offsetLeft - this._barEl.scrollLeft);
     this._submenuEl.style.cssText = `
-      position:absolute;bottom:100%;left:0;right:0;
+      position:absolute;bottom:100%;left:${left}px;min-width:220px;max-width:320px;
       background:#1e293b;border:1px solid #334155;border-radius:8px 8px 0 0;
-      padding:8px 0;max-height:40vh;overflow-y:auto;z-index:1000;
+      padding:8px 0;max-height:40vh;overflow-y:auto;z-index:1000;pointer-events:auto;
       box-shadow:0 -4px 12px rgba(0,0,0,0.4);
     `;
     for (const item of items) {
       const btn = document.createElement('button');
       btn.textContent = item.label;
       btn.style.cssText = `
-        display:block;width:100%;text-align:left;padding:8px 16px;
+        display:block;width:100%;text-align:left;padding:8px 16px;white-space:nowrap;
         background:none;border:none;color:#e2e8f0;font-size:13px;cursor:pointer;
       `;
       btn.addEventListener('mouseenter', () => { btn.style.background = '#334155'; });
@@ -276,7 +324,26 @@ class BottomTabControl {
       });
       this._submenuEl.appendChild(btn);
     }
-    anchor.appendChild(this._submenuEl);
+    this._container.appendChild(this._submenuEl);
+    this._submenuForTabId = tabId;
+    this._activeTabId = tabId;
+    this._updateStylesForSubmenu();
+    // Close on outside click (capture phase; tab clicks stopPropagation).
+    this._outsideClickListener = () => {
+      this._activeTabId = null;
+      this._updateStylesForSubmenu();
+      this._closeSubmenu();
+    };
+    document.addEventListener('click', this._outsideClickListener, true);
+  }
+
+  private _updateStylesForSubmenu() {
+    this._tabButtons.forEach((btn, i) => {
+      const isActive = this._activeTabId === this._tabIds[i];
+      btn.style.color = isActive ? '#22d3ee' : '#94a3b8';
+      btn.style.borderBottomColor = isActive ? '#22d3ee' : 'transparent';
+      btn.style.fontWeight = isActive ? '700' : '500';
+    });
   }
 
   private _updateStyles(tabs: { id: string }[]) {
