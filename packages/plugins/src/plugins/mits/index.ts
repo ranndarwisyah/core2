@@ -120,6 +120,17 @@ function buildToolbarMenu(app: GeoLibreAppAPI) {
           { id: 'slideshow', label: () => t('adv_slideshow', loc()), onSelect: () => openPanel('quality-system') },
           { id: 'rotate', label: () => t('adv_rotate_view', loc()), onSelect: () => openPanel('rotate-view') },
           { id: 'schematic', label: () => t('map_plan', loc()), onSelect: () => openPanel('schematic') },
+          {
+            type: 'submenu' as const,
+            id: 'configuration',
+            label: () => t('adv_config_h', loc()),
+            items: [
+              { id: 'use-config', label: () => t('adv_user_config', loc()), onSelect: () => openPanel('admin') },
+              { id: 'users', label: () => t('adv_users_group', loc()), onSelect: () => openPanel('admin') },
+              { id: 'station-config', label: () => t('adv_station_config', loc()), onSelect: () => openPanel('admin') },
+              { id: 'map-config', label: () => t('adv_map_config', loc()), onSelect: () => openPanel('admin') },
+            ],
+          },
         ],
       },
       { type: 'separator' as const },
@@ -137,7 +148,7 @@ class BottomTabControl {
   private _submenuEl: HTMLDivElement | null = null;
   private _activeTabId: string | null = null;
   private _submenuForTabId: string | null = null;
-  private _outsideClickListener: (() => void) | null = null;
+  private _outsideClickListener: ((ev: Event) => void) | null = null;
   private _cleanup: (() => void) | null = null;
 
   onAdd(map: maplibregl.Map) {
@@ -195,7 +206,12 @@ class BottomTabControl {
         { id: 'adv-slideshow', label: t('adv_slideshow', loc()), onClick: () => openPanel('quality-system') },
         { id: 'adv-rotate', label: t('adv_rotate_view', loc()), onClick: () => openPanel('rotate-view') },
         { id: 'adv-schematic', label: t('map_plan', loc()), onClick: () => openPanel('schematic') },
-        { id: 'adv-config', label: t('admin_config_label', loc()), onClick: () => openPanel('admin') },
+        { id: 'adv-configuration', label: t('adv_config_h', loc()), children: [
+          { id: 'adv-use-config', label: t('adv_user_config', loc()), onClick: () => openPanel('admin') },
+          { id: 'adv-users', label: t('adv_users_group', loc()), onClick: () => openPanel('admin') },
+          { id: 'adv-station-config', label: t('adv_station_config', loc()), onClick: () => openPanel('admin') },
+          { id: 'adv-map-config', label: t('adv_map_config', loc()), onClick: () => openPanel('admin') },
+        ]},
       ]},
     ];
 
@@ -282,7 +298,7 @@ class BottomTabControl {
 
   private _toggleSubmenu(
     tabId: string,
-    items: { id: string; label: string; onClick?: () => void }[],
+    items: { id: string; label: string; onClick?: () => void; children?: { id: string; label: string; onClick?: () => void }[] }[],
     anchor: HTMLElement,
   ) {
     // Toggle: clicking the same parent tab again closes its submenu.
@@ -308,6 +324,49 @@ class BottomTabControl {
       box-shadow:0 -4px 12px rgba(0,0,0,0.4);
     `;
     for (const item of items) {
+      if (item.children && item.children.length > 0) {
+        // Nested group (e.g. Configuration): an inline expandable section.
+        const groupBtn = document.createElement('button');
+        const chev = document.createElement('span');
+        chev.textContent = '▸ ';
+        chev.style.color = '#64748b';
+        groupBtn.appendChild(chev);
+        groupBtn.appendChild(document.createTextNode(item.label));
+        groupBtn.style.cssText = `
+          display:block;width:100%;text-align:left;padding:8px 16px;white-space:nowrap;
+          background:none;border:none;color:#e2e8f0;font-size:13px;font-weight:600;cursor:pointer;
+        `;
+        const nested = document.createElement('div');
+        nested.style.display = 'none';
+        for (const child of item.children) {
+          const childBtn = document.createElement('button');
+          childBtn.textContent = child.label;
+          childBtn.style.cssText = `
+            display:block;width:100%;text-align:left;padding:8px 16px 8px 32px;white-space:nowrap;
+            background:none;border:none;color:#94a3b8;font-size:12px;cursor:pointer;
+          `;
+          childBtn.addEventListener('mouseenter', () => { childBtn.style.background = '#334155'; childBtn.style.color = '#e2e8f0'; });
+          childBtn.addEventListener('mouseleave', () => { childBtn.style.background = 'none'; childBtn.style.color = '#94a3b8'; });
+          childBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            this._closeSubmenu();
+            this._activeTabId = null;
+            child.onClick?.();
+          });
+          nested.appendChild(childBtn);
+        }
+        groupBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const open = nested.style.display !== 'none';
+          nested.style.display = open ? 'none' : 'block';
+          chev.textContent = open ? '▸ ' : '▾ ';
+        });
+        groupBtn.addEventListener('mouseenter', () => { groupBtn.style.background = '#334155'; });
+        groupBtn.addEventListener('mouseleave', () => { groupBtn.style.background = 'none'; });
+        this._submenuEl.appendChild(groupBtn);
+        this._submenuEl.appendChild(nested);
+        continue;
+      }
       const btn = document.createElement('button');
       btn.textContent = item.label;
       btn.style.cssText = `
@@ -328,8 +387,13 @@ class BottomTabControl {
     this._submenuForTabId = tabId;
     this._activeTabId = tabId;
     this._updateStylesForSubmenu();
-    // Close on outside click (capture phase; tab clicks stopPropagation).
-    this._outsideClickListener = () => {
+    // Close on outside click (capture phase, so it runs before the tab
+    // buttons' own bubble handlers). Clicks inside the bar or submenu are
+    // handled by their own logic — without this guard the capture listener
+    // would tear the submenu down before an inner toggle/expand can run.
+    this._outsideClickListener = (ev: Event) => {
+      const target = ev.target as Node | null;
+      if (target && (this._submenuEl?.contains(target) || this._barEl?.contains(target))) return;
       this._activeTabId = null;
       this._updateStylesForSubmenu();
       this._closeSubmenu();
