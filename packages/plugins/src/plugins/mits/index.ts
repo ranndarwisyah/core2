@@ -1,4 +1,5 @@
 import type { GeoLibreAppAPI, GeoLibreMapControlPosition, GeoLibrePlugin } from '../../types';
+import type * as maplibregl from 'maplibre-gl';
 import { MITS_PLUGIN_ID, LAYER_IDS, DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from './constants';
 import { getSession } from './auth';
 import { t, getLocale } from './i18n';
@@ -21,6 +22,7 @@ let riverLayerId: string | null = null;
 let canalLayerId: string | null = null;
 let radarLayerId: string | null = null;
 let unsubscribeLocale: (() => void) | null = null;
+let bottomTabBarControl: BottomTabControl | null = null;
 
 function getLocaleCode(): string {
   return getLocale();
@@ -126,6 +128,169 @@ function buildToolbarMenu(app: GeoLibreAppAPI) {
   };
 }
 
+class BottomTabControl {
+  private _container: HTMLDivElement | null = null;
+  private _barEl: HTMLDivElement | null = null;
+  private _submenuEl: HTMLDivElement | null = null;
+  private _activeTabId: string | null = null;
+  private _cleanup: (() => void) | null = null;
+
+  onAdd(map: maplibregl.Map) {
+    const mapContainer = map.getContainer();
+    this._container = document.createElement('div');
+    this._container.className = 'maplibregl-ctrl';
+    this._container.style.cssText = 'position:absolute;bottom:0;left:0;right:0;z-index:10;pointer-events:none;';
+
+    const bar = document.createElement('div');
+    bar.style.cssText = `
+      display:flex;align-items:center;gap:0;width:100%;height:44px;
+      background:#0f172a;border-top:1px solid #1e293b;overflow-x:auto;
+      scrollbar-width:thin;scrollbar-color:#334155 transparent;
+      font-family:system-ui,-apple-system,sans-serif;pointer-events:auto;
+    `;
+    this._barEl = bar;
+
+    const loc = () => getLocaleCode();
+    const tabs = [
+      { id: 'home', label: t('nav_home', loc()), onClick: () => openPanel('station-list') },
+      { id: 'about', label: t('nav_aboutus', loc()) || 'About Us', submenu: [
+        { id: 'overview', label: t('about_overview', loc()) || 'SHT MADA Overview', onClick: () => openPanel('quality-system') },
+        { id: 'quality', label: t('about_quality', loc()) || 'MADA Quality System', onClick: () => openPanel('quality-system') },
+        { id: 'plan', label: t('about_plan', loc()) || 'Pelan Kawasan Muda', onClick: () => openPanel('schematic') },
+      ]},
+      { id: 'map', label: t('nav_map', loc()) || 'Map', submenu: [
+        { id: 'station-map', label: t('map_station', loc()) || 'Station Location Map', onClick: () => openPanel('station-list') },
+      ]},
+      { id: 'dam', label: t('nav_dam', loc()), submenu: [
+        { id: 'dam-data', label: t('dam_data', loc()) || 'Dam Data', onClick: () => openPanel('dam-status') },
+        { id: 'dam-storage', label: t('dam_storage_graph', loc()), onClick: () => openPanel('dsg') },
+      ]},
+      { id: 'rainfall', label: t('nav_rainfall', loc()), submenu: [
+        { id: 'rf-monthly', label: t('rain_monthly', loc()), onClick: () => openPanel('charts-rain') },
+        { id: 'rf-daily', label: t('rain_daily', loc()), onClick: () => openPanel('charts-rain') },
+        { id: 'rf-contour', label: t('adv_rainfall_contour', loc()), onClick: () => openPanel('rainfall-contour') },
+      ]},
+      { id: 'waterlevel', label: t('nav_waterlevel', loc()), submenu: [
+        { id: 'wl-catchment', label: t('wl_catchment', loc()) || 'Catchment River Data', onClick: () => openPanel('charts-wl') },
+        { id: 'wl-multi', label: t('wl_multiple', loc()), onClick: () => openPanel('charts-wl') },
+        { id: 'wl-graph', label: t('wl_graph', loc()), onClick: () => openPanel('charts-wl') },
+      ]},
+      { id: 'gate', label: t('nav_gateopening', loc()), submenu: [
+        { id: 'gate-map', label: t('gate_map', loc()) || 'Regulator Map', onClick: () => openPanel('rid') },
+        { id: 'gate-data', label: t('gate_data', loc()) || 'Regulator Data', onClick: () => openPanel('rid') },
+      ]},
+      { id: 'webcam', label: t('nav_webcam', loc()), onClick: () => {} },
+      { id: 'services', label: t('nav_services', loc()), submenu: [
+        { id: 'svc-announce', label: t('svc_announcement', loc()), onClick: () => openPanel('announcements') },
+        { id: 'svc-feedback', label: t('svc_feedback', loc()), onClick: () => openPanel('feedback') },
+      ]},
+      { id: 'advance', label: t('nav_advance', loc()), submenu: [
+        { id: 'adv-rid', label: t('adv_region_duty', loc()), onClick: () => openPanel('rid') },
+        { id: 'adv-contour', label: t('adv_rainfall_contour', loc()), onClick: () => openPanel('rainfall-contour') },
+        { id: 'adv-slideshow', label: t('adv_slideshow', loc()), onClick: () => openPanel('quality-system') },
+        { id: 'adv-rotate', label: t('adv_rotate_view', loc()), onClick: () => openPanel('rotate-view') },
+        { id: 'adv-schematic', label: t('map_plan', loc()), onClick: () => openPanel('schematic') },
+        { id: 'adv-config', label: t('admin_config_label', loc()), onClick: () => openPanel('admin') },
+      ]},
+    ];
+
+    for (const tab of tabs) {
+      const btn = document.createElement('button');
+      btn.textContent = tab.label;
+      btn.style.cssText = `
+        flex:none;padding:0 14px;height:100%;
+        background:none;border:none;color:#94a3b8;font-size:12px;font-weight:500;
+        cursor:pointer;white-space:nowrap;transition:all .15s;
+        border-bottom:2px solid transparent;position:relative;
+      `;
+      btn.addEventListener('mouseenter', () => {
+        if (this._activeTabId !== tab.id) btn.style.color = '#e2e8f0';
+      });
+      btn.addEventListener('mouseleave', () => {
+        if (this._activeTabId !== tab.id) btn.style.color = '#94a3b8';
+      });
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this._activeTabId === tab.id && !tab.submenu) {
+          this._activeTabId = null;
+          this._updateStyles(tabs);
+          this._closeSubmenu();
+          return;
+        }
+        if (tab.submenu && tab.submenu.length > 0) {
+          this._toggleSubmenu(tab.submenu, btn);
+          return;
+        }
+        this._closeSubmenu();
+        this._activeTabId = tab.id;
+        this._updateStyles(tabs);
+        tab.onClick?.();
+      });
+      bar.appendChild(btn);
+    }
+
+    this._container.appendChild(bar);
+    mapContainer.appendChild(this._container);
+
+    this._cleanup = () => {
+      this._closeSubmenu();
+      this._barEl = null;
+      this._container = null;
+    };
+
+    return this._container;
+  }
+
+  onRemove() {
+    this._cleanup?.();
+    this._container?.remove();
+  }
+
+  private _closeSubmenu() {
+    if (this._submenuEl) { this._submenuEl.remove(); this._submenuEl = null; }
+  }
+
+  private _toggleSubmenu(items: { id: string; label: string; onClick?: () => void }[], anchor: HTMLElement) {
+    this._closeSubmenu();
+    this._submenuEl = document.createElement('div');
+    this._submenuEl.style.cssText = `
+      position:absolute;bottom:100%;left:0;right:0;
+      background:#1e293b;border:1px solid #334155;border-radius:8px 8px 0 0;
+      padding:8px 0;max-height:40vh;overflow-y:auto;z-index:1000;
+      box-shadow:0 -4px 12px rgba(0,0,0,0.4);
+    `;
+    for (const item of items) {
+      const btn = document.createElement('button');
+      btn.textContent = item.label;
+      btn.style.cssText = `
+        display:block;width:100%;text-align:left;padding:8px 16px;
+        background:none;border:none;color:#e2e8f0;font-size:13px;cursor:pointer;
+      `;
+      btn.addEventListener('mouseenter', () => { btn.style.background = '#334155'; });
+      btn.addEventListener('mouseleave', () => { btn.style.background = 'none'; });
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        this._closeSubmenu();
+        this._activeTabId = null;
+        item.onClick?.();
+      });
+      this._submenuEl.appendChild(btn);
+    }
+    anchor.appendChild(this._submenuEl);
+  }
+
+  private _updateStyles(tabs: { id: string }[]) {
+    if (!this._barEl) return;
+    const btns = this._barEl.querySelectorAll('button');
+    btns.forEach((btn, i) => {
+      const isActive = this._activeTabId === tabs[i].id;
+      btn.style.color = isActive ? '#22d3ee' : '#94a3b8';
+      btn.style.borderBottomColor = isActive ? '#22d3ee' : 'transparent';
+      btn.style.fontWeight = isActive ? '700' : '500';
+    });
+  }
+}
+
 export const mitsPlugin: GeoLibrePlugin = {
   id: MITS_PLUGIN_ID,
   name: 'MITS Telemetry',
@@ -136,6 +301,11 @@ export const mitsPlugin: GeoLibrePlugin = {
     appRef = app;
 
     toolbarDisposer = app.registerToolbarMenu?.(buildToolbarMenu(app)) ?? null;
+
+    if (!bottomTabBarControl) {
+      bottomTabBarControl = new BottomTabControl();
+      app.addMapControl(bottomTabBarControl as any, 'bottom-left');
+    }
 
     rightPanelDisposer = app.registerRightPanel?.({
       id: `${MITS_PLUGIN_ID}-stations`,
@@ -243,6 +413,10 @@ export const mitsPlugin: GeoLibrePlugin = {
     floatingPanelDisposers = [];
     unsubscribeLocale?.();
     unsubscribeLocale = null;
+    if (bottomTabBarControl) {
+      app.removeMapControl(bottomTabBarControl as any);
+      bottomTabBarControl = null;
+    }
     removeMapLayers(app);
     closeAllPanels();
     appRef = null;
