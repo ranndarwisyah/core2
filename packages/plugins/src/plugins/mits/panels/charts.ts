@@ -173,8 +173,8 @@ export function renderRainChartPanel(container: HTMLElement): void {
     const yMax = Math.max(20, Math.ceil(Math.max(...data) * 1.2 / 10) * 10);
 
     const canvas = createCanvas(chartHost);
-    // Dynamic import Chart.js
-    import('chart.js').then(({ Chart }) => {
+    // Dynamic import Chart.js with auto-registration of scales/controllers
+    import('chart.js/auto').then(({ Chart }) => {
       activeChart = new Chart(canvas, {
         type: 'bar',
         data: { labels, datasets: [{ label: t('rain_monthly_axis', locale), data, backgroundColor: bg, borderRadius: 4 }] },
@@ -219,7 +219,7 @@ export function renderRainChartPanel(container: HTMLElement): void {
     const yMax = Math.max(10, Math.ceil((Math.max(...data, th.danger) + 5) / 5) * 5);
 
     const canvas = createCanvas(chartHost);
-    import('chart.js').then(({ Chart }) => {
+    import('chart.js/auto').then(({ Chart }) => {
       activeChart = new Chart(canvas, {
         type: 'bar',
         data: { labels, datasets: [{ label: t('rain_daily_axis', locale), data, backgroundColor: bg, borderRadius: 3 }] },
@@ -346,7 +346,7 @@ export function renderWlChartPanel(container: HTMLElement): void {
     });
 
     const canvas = createCanvas(chartHost);
-    import('chart.js').then(({ Chart }) => {
+    import('chart.js/auto').then(({ Chart }) => {
       activeChart = new Chart(canvas, {
         type: 'scatter',
         data: { datasets: [{ label: 'Reading', data: points, backgroundColor: CHART_COLORS.scatter }] },
@@ -414,7 +414,7 @@ export function renderWlChartPanel(container: HTMLElement): void {
     });
 
     const canvas = createCanvas(chartHost);
-    import('chart.js').then(({ Chart }) => {
+    import('chart.js/auto').then(({ Chart }) => {
       activeChart = new Chart(canvas, {
         type: 'line',
         data: { labels, datasets },
