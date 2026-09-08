@@ -53,5 +53,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260902-001 | Bottom tab bar with 10 primary tabs + submenus; mounting, submenu clipping, about-label fixes | 2026-09-02 | e41a140a | [260902-001-bottom-tab-bar](./quick/260902-001-bottom-tab-bar/) |
 | 260903-001 | Configuration subdirectories (Use Configuration, Users, Station Configuration, Map Configuration) in Advance menus | 2026-09-03 | fad7f9dd | [260903-001-config-subdirectories](./quick/260903-001-config-subdirectories/) |
 | 260908-001 | Navigation panel fixes: remove bottom bar, clean Map panel, center top bar, uniform Advance rows | 2026-09-08 | cd85af48 | [260908-001-nav-panel-fixes](./quick/260908-001-nav-panel-fixes/) |
+| 260908-002 | Secondary panels use horizontal toolbar style (Map look); Advance nested options as dropdowns | 2026-09-08 | c8702b5e | [260908-002-secondary-panels-toolbar](./quick/260908-002-secondary-panels-toolbar/) |
 
-Last activity: 2026-09-08 - Completed quick task 260908-001: Navigation panel fixes
+Last activity: 2026-09-08 - Completed quick task 260908-002: Secondary panels use horizontal toolbar style
