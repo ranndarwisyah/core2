@@ -199,6 +199,18 @@ interface TopToolbarProps {
   /** Activates the map tool for placing an anchored review comment. */
   onAddComment: () => void;
   viewer?: boolean;
+  /**
+   * Hides the brand mark (logo icon + product title). Used when the toolbar is
+   * embedded in the Map secondary panel, which already carries the section
+   * title — the brand must not repeat there.
+   */
+  hideBrand?: boolean;
+  /**
+   * Plugin toolbar menu ids (e.g. a domain "Home" menu) hidden in this
+   * instance. Used by the Map secondary-panel embedding so domain navigation
+   * does not duplicate inside the map tools.
+   */
+  excludePluginMenuIds?: string[];
 }
 
 /** Translation keys for the reasons a Zarr variable cannot be added. */
@@ -226,6 +238,8 @@ export function TopToolbar({
   onOpenBasemapExtract,
   onAddComment,
   viewer = false,
+  hideBrand = false,
+  excludePluginMenuIds,
 }: TopToolbarProps) {
   const { t, i18n } = useTranslation();
   const deploymentCapabilities = useAppStore((state) => state.deploymentCapabilities);
@@ -1986,10 +2000,12 @@ export function TopToolbar({
             "flex-wrap px-2 md:flex-nowrap md:overflow-x-auto",
       )}
     >
-      <span className="me-1 flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary md:me-2">
-        <Map className="h-4 w-4" />
-        {showProjectInfo ? <span className="hidden sm:inline">{appTitle}</span> : null}
-      </span>
+      {hideBrand ? null : (
+        <span className="me-1 flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary md:me-2">
+          <Map className="h-4 w-4" />
+          {showProjectInfo ? <span className="hidden sm:inline">{appTitle}</span> : null}
+        </span>
+      )}
       {!viewer && isMenuVisible(uiProfile, "project") && (
         <ProjectMenu
           chrome={chrome}
@@ -2133,7 +2149,11 @@ export function TopToolbar({
           app.registerToolbarMenu(); external plugin menus render after Help
           (below). Renders nothing when none exist. */}
       {!viewer && deploymentCapabilities.has("plugins:install") ? (
-        <PluginToolbarMenus chrome={chrome} placement="builtin" />
+        <PluginToolbarMenus
+          chrome={chrome}
+          placement="builtin"
+          excludeMenuIds={excludePluginMenuIds}
+        />
       ) : null}
       {!viewer && deploymentCapabilities.has("settings:manage") ? (
         <SettingsDialog
@@ -2260,7 +2280,11 @@ export function TopToolbar({
       {/* External plugin toolbar menus render after Help so third-party menus
           sit at the end of the banner, past the built-in menus. */}
       {!viewer && deploymentCapabilities.has("plugins:install") ? (
-        <PluginToolbarMenus chrome={chrome} placement="external" />
+        <PluginToolbarMenus
+          chrome={chrome}
+          placement="external"
+          excludeMenuIds={excludePluginMenuIds}
+        />
       ) : null}
       <AddDataDialog
         kind={addDataKind}

@@ -30,6 +30,11 @@ interface PluginToolbarMenusProps {
    * after the Help menu. The toolbar renders one instance of each.
    */
   placement: "builtin" | "external";
+  /**
+   * Menu ids hidden in this instance. Used by the Map secondary-panel
+   * embedding so a domain "Home" menu does not duplicate inside map tools.
+   */
+  excludeMenuIds?: string[];
 }
 
 function MenuIcon({ icon, className }: { icon?: string; className: string }) {
@@ -123,7 +128,7 @@ function PluginToolbarMenu({ menu, chrome }: { menu: GeoLibreToolbarMenu; chrome
  * the Help menu (selected by `placement`). Renders nothing when no menu in the
  * requested group has any items.
  */
-export function PluginToolbarMenus({ chrome, placement }: PluginToolbarMenusProps) {
+export function PluginToolbarMenus({ chrome, placement, excludeMenuIds }: PluginToolbarMenusProps) {
   const { entries } = useToolbarMenus();
   // Subscribed purely for its `languageChanged` re-render: a menu whose labels
   // are getters keeps them in step with the app language only if the host
@@ -136,6 +141,7 @@ export function PluginToolbarMenus({ chrome, placement }: PluginToolbarMenusProp
   // source; menus with no owner (or an unknown one) fall in with the built-ins.
   const visible = entries.filter((entry) => {
     if (entry.menu.items.length === 0) return false;
+    if (excludeMenuIds?.includes(entry.menu.id)) return false;
     const external = Boolean(entry.ownerPluginId && isExternalPluginId(entry.ownerPluginId));
     return placement === "external" ? external : !external;
   });

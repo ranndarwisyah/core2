@@ -42,6 +42,7 @@ import {
   startLayerGeometryEdit,
   subscribeGeometryEdit,
   TIME_SLIDER_PLUGIN_ID,
+  MITS_PLUGIN_ID,
   VIEWER_BLOCKED_PLUGIN_IDS,
 } from "@geolibre/plugins";
 import {
@@ -191,6 +192,12 @@ import { ProjectHistoryDialog } from "./ProjectHistoryDialog";
 import { ProjectRecoveryDialog } from "./ProjectRecoveryDialog";
 import { StatusBar } from "./StatusBar";
 import { TopToolbar } from "./TopToolbar";
+import {
+  DomainPagePanel,
+  DomainSecondaryPanel,
+  DomainTopBar,
+  useDomainNav,
+} from "./domain-nav";
 import type { LayoutOptions } from "../../hooks/useLayoutOptions";
 import type { ThemeMode } from "../../hooks/useThemeMode";
 import type { ProjectUrlLoadState } from "../../hooks/useProjectUrlLoader";
@@ -680,6 +687,12 @@ export function DesktopShell({
 
   const projectHistory = useProjectHistory(mapControllerRef);
   const [projectHistoryOpen, setProjectHistoryOpen] = useState(false);
+  // Domain navigation (panels.md): sole primary top bar + secondary panels
+  // under it + full-overlay page panel. Disabled for viewer / map-only /
+  // hidden-panels embeds so those chrome-free surfaces keep their layout.
+  const domainNav = useDomainNav();
+  const domainNavEnabled =
+    layoutOptions.toolbarVisible && !layoutOptions.panelsHidden && !layoutOptions.viewer;
   // The place shown in the Wikipedia knowledge card, or null when it is closed.
   // `pendingKnowledgePlace` holds the target while the one-time consent notice
   // is open, so it can be applied only after the user acknowledges it.
@@ -2352,7 +2365,11 @@ export function DesktopShell({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      {layoutOptions.toolbarVisible ? (
+      {domainNavEnabled ? (
+        <SectionErrorBoundary label="Toolbar" displayName={t("shell.section.toolbar")}>
+          <DomainTopBar activeId={domainNav.activeId} onSelect={domainNav.toggleSecondary} />
+        </SectionErrorBoundary>
+      ) : layoutOptions.toolbarVisible ? (
         <SectionErrorBoundary label="Toolbar" displayName={t("shell.section.toolbar")}>
           <TopToolbar
             compact={layoutOptions.compact}
@@ -2377,7 +2394,48 @@ export function DesktopShell({
           />
         </SectionErrorBoundary>
       ) : null}
+      {domainNavEnabled && domainNav.activeId ? (
+        <SectionErrorBoundary label="Domain panel" displayName={t("shell.section.toolbar")}>
+          <DomainSecondaryPanel
+            activeId={domainNav.activeId}
+            onClose={domainNav.closeSecondary}
+            onOpenPage={domainNav.openPage}
+            mapTools={
+              domainNav.activeId === "map" ? (
+                <TopToolbar
+                  compact={layoutOptions.compact}
+                  diagnosticsErrorCount={diagnostics.errorCount}
+                  mapControllerRef={mapControllerRef}
+                  mapReadyGeneration={mapReadyGeneration}
+                  showLabels={layoutOptions.toolbarLabels}
+                  showProjectInfo={false}
+                  hideBrand
+                  excludePluginMenuIds={[MITS_PLUGIN_ID]}
+                  themeMode={themeMode}
+                  collaboration={collaboration}
+                  projectFiles={projectFiles}
+                  onOpenDiagnostics={() => setDiagnosticsOpen(true)}
+                  onOpenProjectHistory={() => {
+                    projectHistory.clearRestoreError();
+                    void projectHistory.refresh();
+                    setProjectHistoryOpen(true);
+                  }}
+                  onToggleThemeMode={onToggleThemeMode}
+                  onOpenBasemapExtract={() => setBasemapExtractOpen(true)}
+                  onAddComment={commentTool.toggleTool}
+                  viewer={layoutOptions.viewer}
+                />
+              ) : undefined
+            }
+          />
+        </SectionErrorBoundary>
+      ) : null}
       <div data-workspace-row="" className="relative flex min-h-0 flex-1 flex-col md:flex-row">
+        {/* Page panel (panels.md §4): full overlay below the top bar. The live
+            map stays mounted behind it; closing returns to the map. */}
+        {domainNavEnabled && domainNav.page ? (
+          <DomainPagePanel page={domainNav.page} onClose={domainNav.closePage} />
+        ) : null}
         {/* The Browser panel body is portaled into its dedicated content host
             (which the dock slots relocate between positions), so it shares the
             app's React context and the shell owns its dock chrome. */}
