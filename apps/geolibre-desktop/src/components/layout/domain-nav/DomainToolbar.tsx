@@ -111,7 +111,7 @@ export function DomainToolbar({ activeId, onOpenPage }: DomainToolbarProps) {
   return (
     <div
       data-testid={`domain-toolbar-${activeId}`}
-      className="flex flex-wrap items-center gap-1 px-2 py-1.5 md:flex-nowrap md:overflow-x-auto"
+      className="flex min-w-0 flex-1 flex-wrap items-center gap-1 md:flex-nowrap md:overflow-x-auto"
     >
       {entry.items.map((item) => {
         const Icon = itemIcon(activeId, item.id);
