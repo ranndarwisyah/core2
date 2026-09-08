@@ -7723,5 +7723,104 @@
     "added": "Added {{count}} feature(s){{layer}}.",
     "badResponse": "SamGeo API did not return a GeoJSON FeatureCollection.",
     "unknownProjection": "The result is not in WGS84 and the image carries no readable projection, so it cannot be placed on the map. Use a georeferenced GeoTIFF."
+  },
+  "domainNav": {
+    "topBarLabel": "Primary navigation",
+    "closeSecondary": "Close panel",
+    "closePage": "Close page and return to the map",
+    "openPage": "Open",
+    "pagePlaceholder": "Detailed content for this section will be specified in a follow-up panel document.",
+    "home": {
+      "label": "Home",
+      "overview": "Overview"
+    },
+    "about": {
+      "label": "About Us",
+      "overview": "SHT MADA Overview",
+      "message": "Mesej GM / TPP(T)",
+      "quality": "MADA Quality System",
+      "contact": "Hubungi Kami",
+      "plan": "Pelan Kawasan Muda"
+    },
+    "map": {
+      "label": "Map",
+      "stations": "Station Location Map"
+    },
+    "dam": {
+      "label": "Dam",
+      "data": "Dam Data",
+      "storageGraph": "Data Storage Graph",
+      "inflowOutflow": "Inflow / Outflow Graph"
+    },
+    "rainfall": {
+      "label": "Rainfall",
+      "monthly": "Monthly Rainfall Chart",
+      "daily": "Daily Rainfall Chart",
+      "inflowOutflow": "Inflow / Outflow Graph",
+      "dam": "Dam Rainfall Data and Chart",
+      "river": "River Rainfall Data and Chart",
+      "mudaArea": "Muda Area Rainfall (Overall / Region)",
+      "sevenDays": "Rainfall Data — 7 Days",
+      "hourly": "Hourly Rainfall Data"
+    },
+    "waterlevel": {
+      "label": "Water Level",
+      "catchment": "Catchment River Data & WL Graph",
+      "multiple": "Multiple Water Level Graph",
+      "graph": "Water Level Graph",
+      "data": "Water Level Data"
+    },
+    "gate": {
+      "label": "Gate Opening",
+      "map": "Regulator Map",
+      "data": "Regulator Data",
+      "level": "Regulator Water Level",
+      "distribution": "Water Distribution"
+    },
+    "webcam": {
+      "label": "Web Cam",
+      "sht": "Station SHT",
+      "ampangJajar": "Ampang Jajar",
+      "spai": "SPAI"
+    },
+    "services": {
+      "label": "Services",
+      "announcement": "Announcement",
+      "feedback": "Feedback"
+    },
+    "advance": {
+      "label": "Advance",
+      "data": "Data",
+      "report": "Report",
+      "info": "Info",
+      "analysis": "Analysis",
+      "config": "Configuration",
+      "dataEntry": "Data Entry",
+      "damData": "Dam Data",
+      "tableBpah": "Table BPAH",
+      "dutyOverall": "Water Source & Irrigation [Duty] Overall",
+      "dutyRegion": "Region Irrigation Duty",
+      "discharge": "Discharge (Q)",
+      "dataTable": "Data Table",
+      "realtime": "Real-Time Data",
+      "query": "Database Query",
+      "dailyOps": "Daily Water Management",
+      "drought": "Drought",
+      "floodOps": "Flood Operation",
+      "dailyReport": "Daily Report",
+      "record": "Daily Report Record",
+      "slideshow": "Slide Show",
+      "rotate": "Rotate View",
+      "contour": "Rainfall Contour",
+      "rainblock": "Rainblock Map",
+      "simulation": "Simulation Dam",
+      "distribution": "Water Distribution",
+      "opsMap": "Operation Map",
+      "floodMap": "Flood Map",
+      "useConfig": "Use Configuration",
+      "users": "Users",
+      "stations": "Station Configuration",
+      "mapConfig": "Map Configuration"
+    }
   }
 }
