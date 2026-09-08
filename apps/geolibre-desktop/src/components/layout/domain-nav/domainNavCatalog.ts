@@ -79,10 +79,13 @@ export const DOMAIN_NAV_CATALOG: DomainNavEntry[] = [
     id: "map",
     labelKey: "domainNav.map.label",
     items: [
-      // Map-specific views. The original GeoLibre top-bar functions
-      // (Project / Edit / View / Add Data / …) render above this list in the
-      // Map secondary panel (panels.md §3.2).
-      item("stations", "domainNav.map.stations"),
+      // Map views. The original GeoLibre top-bar functions (Project / Edit /
+      // View / Add Data / …) render in the same toolbar row via the Map
+      // secondary panel's embedded TopToolbar (panels.md §3.2).
+      item("stations", "domainNav.map.stations", true),
+      item("mudaAreaPlan", "domainNav.map.mudaAreaPlan", true),
+      item("qualitySystem", "domainNav.map.qualitySystem", true),
+      item("contactUs", "domainNav.map.contactUs", true),
     ],
   },
   {

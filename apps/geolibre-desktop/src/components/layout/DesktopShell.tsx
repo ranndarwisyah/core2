@@ -195,6 +195,7 @@ import { TopToolbar } from "./TopToolbar";
 import {
   DomainPagePanel,
   DomainSecondaryPanel,
+  DomainToolbarItemList,
   DomainTopBar,
   useDomainNav,
 } from "./domain-nav";
@@ -2424,6 +2425,15 @@ export function DesktopShell({
                   onOpenBasemapExtract={() => setBasemapExtractOpen(true)}
                   onAddComment={commentTool.toggleTool}
                   viewer={layoutOptions.viewer}
+                  onClose={domainNav.closeSecondary}
+                  trailingItems={
+                    <div
+                      className="flex items-center gap-1 border-s border-border ps-1"
+                      data-testid="domain-map-extra-items"
+                    >
+                      <DomainToolbarItemList navId="map" onOpenPage={domainNav.openPage} />
+                    </div>
+                  }
                 />
               ) : undefined
             }

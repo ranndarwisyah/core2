@@ -9,7 +9,11 @@ interface DomainSecondaryPanelProps {
   activeId: DomainNavId;
   onClose: () => void;
   onOpenPage: (ref: DomainPageRef) => void;
-  /** Map tools slot: the relocated GeoLibre top bar (§3.2). */
+  /**
+   * Map tools slot: the relocated GeoLibre top bar with the domain items +
+   * close control embedded on the same row (§3.2). When present, the panel
+   * renders only this (no extra row); other panels render their toolbar row.
+   */
   mapTools?: ReactNode;
 }
 
@@ -40,24 +44,22 @@ export function DomainSecondaryPanel({
       aria-label={t(entry.labelKey)}
       className="max-h-[46vh] min-w-0 shrink-0 overflow-y-auto border-b bg-card"
     >
-      {activeId === "map" && mapTools ? (
-        <div data-testid="domain-map-tools" className="border-b px-1 pb-1">
-          {mapTools}
+      {mapTools ? (
+        <div data-testid="domain-map-tools">{mapTools}</div>
+      ) : (
+        <div className="flex items-center gap-1 px-2 py-1.5">
+          <DomainToolbar activeId={activeId} onOpenPage={onOpenPage} />
+          <button
+            type="button"
+            data-testid="domain-secondary-close"
+            onClick={onClose}
+            aria-label={t("domainNav.closeSecondary")}
+            className="ms-auto shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-      ) : null}
-
-      <div className="flex items-center gap-1 px-2 py-1.5">
-        <DomainToolbar activeId={activeId} onOpenPage={onOpenPage} />
-        <button
-          type="button"
-          data-testid="domain-secondary-close"
-          onClick={onClose}
-          aria-label={t("domainNav.closeSecondary")}
-          className="ms-auto shrink-0 rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+      )}
     </section>
   );
 }

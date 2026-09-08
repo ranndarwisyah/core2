@@ -2,7 +2,7 @@ export { DOMAIN_NAV_CATALOG, DOMAIN_NAV_ORDER, findDomainNavSubItem, getDomainNa
 export type { DomainNavEntry, DomainNavId, DomainNavLabelKey, DomainNavSubItem } from "./domainNavCatalog";
 export { DomainPagePanel } from "./DomainPagePanel";
 export { DomainSecondaryPanel } from "./DomainSecondaryPanel";
-export { DomainToolbar } from "./DomainToolbar";
+export { DomainToolbar, DomainToolbarItem, DomainToolbarItemList } from "./DomainToolbar";
 export { DomainTopBar } from "./DomainTopBar";
 export {
   INITIAL_DOMAIN_NAV_STATE,

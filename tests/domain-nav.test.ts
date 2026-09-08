@@ -34,6 +34,12 @@ describe("domain nav catalog (panels.md §2)", () => {
     assert.equal(getDomainNavEntry("rainfall").items.length, 8);
     assert.equal(getDomainNavEntry("waterlevel").items.length, 4);
     assert.equal(getDomainNavEntry("about").items.length, 5);
+    // The Map panel mixes the GeoLibre toolbar with the MITS map views; the
+    // catalog lists the MITS views as peer items (rendered in the toolbar row).
+    assert.deepEqual(
+      getDomainNavEntry("map").items.map((item) => item.id),
+      ["stations", "mudaAreaPlan", "qualitySystem", "contactUs"],
+    );
     // Advance groups nest via inline dropdowns, not nested panels.
     const advance = getDomainNavEntry("advance");
     assert.equal(advance.items.length, 5);
@@ -58,7 +64,8 @@ describe("domain nav catalog (panels.md §2)", () => {
   it("resolves page-panel items including nested Advance children", () => {
     assert.equal(findDomainNavSubItem("dam", "data")?.opensPagePanel, true);
     assert.equal(findDomainNavSubItem("advance", "contour")?.opensPagePanel, true);
-    assert.equal(findDomainNavSubItem("map", "stations")?.opensPagePanel, undefined);
+    assert.equal(findDomainNavSubItem("map", "stations")?.opensPagePanel, true);
+    assert.equal(findDomainNavSubItem("map", "contactUs")?.opensPagePanel, true);
     assert.equal(findDomainNavSubItem("dam", "missing"), null);
   });
 });

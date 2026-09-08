@@ -91,6 +91,7 @@ import {
   Layers,
   Workflow,
   Wrench,
+  X,
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
@@ -211,6 +212,19 @@ interface TopToolbarProps {
    * does not duplicate inside the map tools.
    */
   excludePluginMenuIds?: string[];
+  /**
+   * Extra toolbar buttons appended to the *same* row as the built-in menus
+   * (before the right-side project controls). Used by the Map secondary-panel
+   * embedding to place domain items (Station Location Map, …) at the same
+   * level as Project / Edit / View instead of a separate row below.
+   */
+  trailingItems?: React.ReactNode;
+  /**
+   * When set, renders a close control at the far right of the toolbar. Used by
+   * the Map secondary-panel embedding, whose header row carries the panel's
+   * close action instead of a separate title bar.
+   */
+  onClose?: () => void;
 }
 
 /** Translation keys for the reasons a Zarr variable cannot be added. */
@@ -240,6 +254,8 @@ export function TopToolbar({
   viewer = false,
   hideBrand = false,
   excludePluginMenuIds,
+  trailingItems,
+  onClose,
 }: TopToolbarProps) {
   const { t, i18n } = useTranslation();
   const deploymentCapabilities = useAppStore((state) => state.deploymentCapabilities);
@@ -2286,6 +2302,9 @@ export function TopToolbar({
           excludeMenuIds={excludePluginMenuIds}
         />
       ) : null}
+      {/* Domain items appended into the same row as the built-in menus (Map
+          secondary-panel embedding): Station Location Map, Muda Area Plan, … */}
+      {trailingItems}
       <AddDataDialog
         kind={addDataKind}
         mapControllerRef={mapControllerRef}
@@ -2405,6 +2424,18 @@ export function TopToolbar({
               </span>
             ) : null}
           </>
+        ) : null}
+        {onClose ? (
+          <Button
+            aria-label={t("domainNav.closeSecondary")}
+            className="h-7 w-7 shrink-0"
+            onClick={onClose}
+            size="icon"
+            title={t("domainNav.closeSecondary")}
+            variant="ghost"
+          >
+            <X className="h-3.5 w-3.5" />
+          </Button>
         ) : null}
       </div>
     </header>

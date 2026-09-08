@@ -7742,10 +7742,13 @@
       "contact": "Hubungi Kami",
       "plan": "Pelan Kawasan Muda"
     },
-    "map": {
-      "label": "Map",
-      "stations": "Station Location Map"
-    },
+"map": {
+  "label": "Map",
+  "stations": "Station Location Map",
+  "mudaAreaPlan": "Muda Area Plan",
+  "qualitySystem": "MADA Quality System",
+  "contactUs": "Contact Us"
+ },
     "dam": {
       "label": "Dam",
       "data": "Dam Data",

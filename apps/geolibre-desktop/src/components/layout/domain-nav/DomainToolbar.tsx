@@ -36,7 +36,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { getDomainNavEntry, type DomainNavId } from "./domainNavCatalog";
+import { getDomainNavEntry, type DomainNavId, type DomainNavSubItem } from "./domainNavCatalog";
 import type { DomainPageRef } from "./useDomainNav";
 
 /**
@@ -52,6 +52,9 @@ const ITEM_ICONS: Record<string, LucideIcon> = {
   "about:contact": Contact,
   "about:plan": ClipboardList,
   "map:stations": RadioTower,
+  "map:mudaAreaPlan": MapPinned,
+  "map:qualitySystem": ShieldCheck,
+  "map:contactUs": Contact,
   "dam:data": Table2,
   "dam:storageGraph": LineChart,
   "dam:inflowOutflow": Waves,
@@ -105,76 +108,101 @@ interface DomainToolbarProps {
  * stays present but not messy.
  */
 export function DomainToolbar({ activeId, onOpenPage }: DomainToolbarProps) {
-  const { t } = useTranslation();
-  const entry = getDomainNavEntry(activeId);
-
   return (
     <div
       data-testid={`domain-toolbar-${activeId}`}
       className="flex min-w-0 flex-1 flex-wrap items-center gap-1 md:flex-nowrap md:overflow-x-auto"
     >
-      {entry.items.map((item) => {
-        const Icon = itemIcon(activeId, item.id);
-        if (item.children) {
-          // Group (Advance): a dropdown — options appear on click.
-          return (
-            <DropdownMenu key={item.id}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className={TOOLBAR_BUTTON_CLASS}
-                  variant="ghost"
-                  size="sm"
-                  data-testid={`domain-group-${item.id}`}
-                  aria-label={t(item.labelKey)}
-                >
-                  <Icon className="me-1 h-3.5 w-3.5" />
-                  <span>{t(item.labelKey)}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="min-w-52">
-                {item.children.map((child) => (
-                  <DropdownMenuItem
-                    key={child.id}
-                    disabled={!child.opensPagePanel}
-                    data-testid={`domain-item-${child.id}`}
-                    onSelect={
-                      child.opensPagePanel
-                        ? () => onOpenPage({ navId: activeId, itemId: child.id })
-                        : undefined
-                    }
-                  >
-                    {t(child.labelKey)}
-                    {child.opensPagePanel ? (
-                      <span className="ms-2 text-xs text-muted-foreground">
-                        {t("domainNav.openPage")} →
-                      </span>
-                    ) : null}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        }
-        // Leaf: opens its page panel when one exists; otherwise disabled.
-        return (
+      <DomainToolbarItemList navId={activeId} onOpenPage={onOpenPage} />
+    </div>
+  );
+}
+
+interface DomainToolbarItemListProps {
+  navId: DomainNavId;
+  onOpenPage: (ref: DomainPageRef) => void;
+}
+
+/**
+ * Renders every sub-item of a top-level entry as horizontal toolbar buttons.
+ * Used by DomainToolbar and, without the row wrapper, by the Map
+ * secondary-panel TopToolbar embedding so domain items share the toolbar row.
+ */
+export function DomainToolbarItemList({ navId, onOpenPage }: DomainToolbarItemListProps) {
+  const entry = getDomainNavEntry(navId);
+  return (
+    <>
+      {entry.items.map((item) => (
+        <DomainToolbarItem key={item.id} navId={navId} item={item} onOpenPage={onOpenPage} />
+      ))}
+    </>
+  );
+}
+
+interface DomainToolbarItemProps {
+  navId: DomainNavId;
+  item: DomainNavSubItem;
+  onOpenPage: (ref: DomainPageRef) => void;
+}
+
+/** A single toolbar button: a group becomes a dropdown, a leaf a button. */
+export function DomainToolbarItem({ navId, item, onOpenPage }: DomainToolbarItemProps) {
+  const { t } = useTranslation();
+  const Icon = itemIcon(navId, item.id);
+  if (item.children) {
+    // Group (Advance): a dropdown — options appear on click.
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <Button
-            key={item.id}
             className={TOOLBAR_BUTTON_CLASS}
             variant="ghost"
             size="sm"
-            disabled={!item.opensPagePanel}
-            data-testid={`domain-item-${item.id}`}
-            onClick={
-              item.opensPagePanel
-                ? () => onOpenPage({ navId: activeId, itemId: item.id })
-                : undefined
-            }
+            data-testid={`domain-group-${item.id}`}
+            aria-label={t(item.labelKey)}
           >
             <Icon className="me-1 h-3.5 w-3.5" />
             <span>{t(item.labelKey)}</span>
           </Button>
-        );
-      })}
-    </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="min-w-52">
+          {item.children.map((child) => (
+            <DropdownMenuItem
+              key={child.id}
+              disabled={!child.opensPagePanel}
+              data-testid={`domain-item-${child.id}`}
+              onSelect={
+                child.opensPagePanel
+                  ? () => onOpenPage({ navId, itemId: child.id })
+                  : undefined
+              }
+            >
+              {t(child.labelKey)}
+              {child.opensPagePanel ? (
+                <span className="ms-2 text-xs text-muted-foreground">
+                  {t("domainNav.openPage")} →
+                </span>
+              ) : null}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+  // Leaf: opens its page panel when one exists; otherwise disabled.
+  return (
+    <Button
+      className={TOOLBAR_BUTTON_CLASS}
+      variant="ghost"
+      size="sm"
+      disabled={!item.opensPagePanel}
+      data-testid={`domain-item-${item.id}`}
+      onClick={
+        item.opensPagePanel ? () => onOpenPage({ navId, itemId: item.id }) : undefined
+      }
+    >
+      <Icon className="me-1 h-3.5 w-3.5" />
+      <span>{t(item.labelKey)}</span>
+    </Button>
   );
 }
