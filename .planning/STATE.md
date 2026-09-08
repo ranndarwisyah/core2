@@ -50,5 +50,8 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260901-005 | Auto-activate MITS plugin on startup | 2026-09-01 | e8e9c526 | [260901-005-auto-activate-plugin](./quick/260901-005-auto-activate-plugin/) |
 | 260901-006 | Fix TypeScript errors preventing MITS plugin from loading | 2026-09-01 | 7f0f7fc4 | [260901-006-fix-ts-errors](./quick/260901-006-fix-ts-errors/) |
 | 260901-007 | Fix plugin activation — activeByDefault plugins not activated | 2026-09-02 | 8f09e10e | [260901-007-fix-plugin-activation](./quick/260901-007-fix-plugin-activation/) |
+| 260902-001 | Bottom tab bar with 10 primary tabs + submenus; mounting, submenu clipping, about-label fixes | 2026-09-02 | e41a140a | [260902-001-bottom-tab-bar](./quick/260902-001-bottom-tab-bar/) |
+| 260903-001 | Configuration subdirectories (Use Configuration, Users, Station Configuration, Map Configuration) in Advance menus | 2026-09-03 | fad7f9dd | [260903-001-config-subdirectories](./quick/260903-001-config-subdirectories/) |
+| 260908-001 | Navigation panel fixes: remove bottom bar, clean Map panel, center top bar, uniform Advance rows | 2026-09-08 | cd85af48 | [260908-001-nav-panel-fixes](./quick/260908-001-nav-panel-fixes/) |
 
-Last activity: 2026-09-02 - Completed quick task 260901-007: Fix plugin activation
+Last activity: 2026-09-08 - Completed quick task 260908-001: Navigation panel fixes
