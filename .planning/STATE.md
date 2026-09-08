@@ -55,5 +55,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260908-001 | Navigation panel fixes: remove bottom bar, clean Map panel, center top bar, uniform Advance rows | 2026-09-08 | cd85af48 | [260908-001-nav-panel-fixes](./quick/260908-001-nav-panel-fixes/) |
 | 260908-002 | Secondary panels use horizontal toolbar style (Map look); Advance nested options as dropdowns | 2026-09-08 | c8702b5e | [260908-002-secondary-panels-toolbar](./quick/260908-002-secondary-panels-toolbar/) |
 | 260908-003 | Remove secondary panel title bars; inline close (X) control on the toolbar row | 2026-09-08 | 51f40486 | [260908-003-remove-secondary-panel-titles](./quick/260908-003-remove-secondary-panel-titles/) |
+| 260908-004 | Map secondary panel: single toolbar row with MITS views (Station Location Map + Muda Area Plan + MADA Quality System + Contact Us) | 2026-09-08 | cab8f4db | [260908-004-map-secondary-panel-items](./quick/260908-004-map-secondary-panel-items/) |
 
-Last activity: 2026-09-08 - Completed quick task 260908-003: Remove secondary panel title bars
+Last activity: 2026-09-08 - Completed quick task 260908-004: Map secondary panel single toolbar with all items
