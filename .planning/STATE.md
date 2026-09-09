@@ -56,5 +56,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260908-002 | Secondary panels use horizontal toolbar style (Map look); Advance nested options as dropdowns | 2026-09-08 | c8702b5e | [260908-002-secondary-panels-toolbar](./quick/260908-002-secondary-panels-toolbar/) |
 | 260908-003 | Remove secondary panel title bars; inline close (X) control on the toolbar row | 2026-09-08 | 51f40486 | [260908-003-remove-secondary-panel-titles](./quick/260908-003-remove-secondary-panel-titles/) |
 | 260908-004 | Map secondary panel: single toolbar row with MITS views (Station Location Map + Muda Area Plan + MADA Quality System + Contact Us) | 2026-09-08 | cab8f4db | [260908-004-map-secondary-panel-items](./quick/260908-004-map-secondary-panel-items/) |
+| 260909-001 | Real-time right panel (Stations/Alerts tabs), floating station detail panel, public summary full overlay with CSV/PDF export | 2026-09-09 | 2e8dbb24 | [260909-001-right-panel](./quick/260909-001-right-panel/) |
 
-Last activity: 2026-09-08 - Completed quick task 260908-004: Map secondary panel single toolbar with all items
+Last activity: 2026-09-09 - Completed quick task 260909-001: realtime right panel, floating station detail, public summary overlay
