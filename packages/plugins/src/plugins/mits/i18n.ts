@@ -3,6 +3,7 @@ const I18N_EN: Record<string, string> = {
   nav_home: 'Home', nav_about: 'About Us', nav_map: 'Map', nav_dam: 'Dam',
   nav_rainfall: 'Rainfall', nav_waterlevel: 'Water Level', nav_gateopening: 'Gate Opening',
   nav_webcam: 'Web Cam', nav_services: 'Services', nav_advance: 'Advance',
+  nav_summary: 'Public Summary',
   about_overview: 'SHT MADA Overview', about_message: 'GM / TPP(T) Message',
   about_quality: 'MADA Quality System', about_contact: 'Contact Us',
   map_plan: 'Muda Area Plan', map_station_loc: 'Station Location Map',
@@ -32,6 +33,7 @@ const I18N_EN: Record<string, string> = {
   ui_no_of_days: 'No. of days', ui_no_of_months: 'No. of months',
   ui_query: 'Query', ui_status: 'Status',
   ui_normal: 'Normal', ui_alert: 'Alert', ui_warning: 'Warning', ui_danger: 'Danger',
+  ui_online: 'Online', ui_offline: 'Offline',
   ui_last_update: 'Last Update', ui_wilayah: 'Region',
   ui_all_regions: 'All regions', ui_since_8am: 'Since 8am',
   ui_mock_data: 'mock data', ui_search_station: 'Search station',
@@ -154,6 +156,9 @@ const I18N_EN: Record<string, string> = {
   ps_col_status: 'Status', ps_col_updated: 'Updated',
   ps_note: 'Public view shows status labels only.',
   ps_no_match: 'No stations match.',
+  ps_all_types: 'All types',
+  ps_export_csv: 'Export CSV',
+  ps_export_pdf: 'Export PDF',
   alerts_legend_title: 'What the levels mean',
   alerts_legend_alert: 'early caution; readings above usual, keep watching.',
   alerts_legend_warning: 'elevated risk; stay aware and follow local advisories.',
@@ -228,6 +233,8 @@ const I18N_EN: Record<string, string> = {
   fb_new: 'New Feedback', fb_empty: 'No feedback yet.',
   ui_rainfall_mm: 'Rainfall (mm)', ui_water_level_m: 'Water level (m)',
   wl_scatter_note: 'Catchment river data',
+  sd_center_map: 'Center map', sd_open_data: 'Open full data',
+  sd_thresholds: 'Thresholds',
 };
 
 const I18N_MS: Record<string, string> = {
@@ -235,6 +242,7 @@ const I18N_MS: Record<string, string> = {
   nav_home: 'Laman Utama', nav_about: 'Tentang Kami', nav_map: 'Peta', nav_dam: 'Empangan',
   nav_rainfall: 'Hujan', nav_waterlevel: 'Paras Air', nav_gateopening: 'Bukaan Pintu',
   nav_webcam: 'Kamera Web', nav_services: 'Perkhidmatan', nav_advance: 'Lanjutan',
+  nav_summary: 'Ringkasan Awam',
   about_overview: 'Gambaran Keseluruhan SHT MADA', about_message: 'Mesej GM / TPP(T)',
   about_quality: 'Sistem Kualiti MADA', about_contact: 'Hubungi Kami',
   map_plan: 'Pelan Kawasan Muda', map_station_loc: 'Peta Lokasi Stesen',
@@ -264,6 +272,7 @@ const I18N_MS: Record<string, string> = {
   ui_no_of_days: 'Bil. hari', ui_no_of_months: 'Bil. bulan',
   ui_query: 'Carian', ui_status: 'Status',
   ui_normal: 'Normal', ui_alert: 'Waspada', ui_warning: 'Amaran', ui_danger: 'Bahaya',
+  ui_online: 'Dalam Talian', ui_offline: 'Luar Talian',
   ui_last_update: 'Kemaskini Terakhir', ui_wilayah: 'Wilayah',
   ui_all_regions: 'Semua wilayah', ui_since_8am: 'Sejak 8 pagi',
   ui_mock_data: 'data contoh', ui_search_station: 'Cari stesen',
@@ -386,6 +395,9 @@ const I18N_MS: Record<string, string> = {
   ps_col_status: 'Status', ps_col_updated: 'Dikemas kini',
   ps_note: 'Paparan awam hanya menunjukkan label status.',
   ps_no_match: 'Tiada stesen sepadan.',
+  ps_all_types: 'Semua jenis',
+  ps_export_csv: 'Eksport CSV',
+  ps_export_pdf: 'Eksport PDF',
   alerts_legend_title: 'Maksud tahap status',
   alerts_legend_alert: 'amaran awal; bacaan melebihi biasa, terus pantau.',
   alerts_legend_warning: 'risiko meningkat; berwaspada dan ikut nasihat pihak berkuasa tempatan.',
@@ -460,6 +472,8 @@ const I18N_MS: Record<string, string> = {
   fb_new: 'Maklum Balas Baharu', fb_empty: 'Tiada maklum balas lagi.',
   ui_rainfall_mm: 'Hujan (mm)', ui_water_level_m: 'Paras air (m)',
   wl_scatter_note: 'Data sungai tadahan',
+  sd_center_map: 'Pusatkan peta', sd_open_data: 'Buka data penuh',
+  sd_thresholds: 'Ambang',
 };
 
 const DICTS: Record<string, Record<string, string>> = {

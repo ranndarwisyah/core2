@@ -8,6 +8,8 @@ import { buildStationGeoJSON, buildRiverGeoJSON, buildConveyanceGeoJSON } from '
 import { buildPopupHtml, getStationPopupOptions } from './map/markers';
 import { initRadar, startRadar, stopRadar, getRadarFrames, setRadarFrame } from './map/radar';
 import { openPanel, closePanel, closeAllPanels, registerPanel, unregisterPanel } from './panels/manager';
+import { openPublicSummary, closePublicSummary } from './panels/public-summary';
+import { disposeStationDetail } from './panels/station-detail';
 import type { MitsStation, MitsRealtime } from './types';
 import { STORAGE_KEYS } from './constants';
 
@@ -98,6 +100,7 @@ function buildToolbarMenu(app: GeoLibreAppAPI) {
       { id: 'gate', label: () => t('nav_gateopening', loc()), onSelect: () => openPanel('rid') },
       { id: 'webcam', label: () => t('nav_webcam', loc()), onSelect: () => {} },
       { type: 'separator' as const },
+      { id: 'public-summary', label: () => t('nav_summary', loc()), onSelect: () => openPanel('public-summary') },
       {
         type: 'submenu' as const,
         id: 'services',
@@ -152,7 +155,7 @@ export const mitsPlugin: GeoLibrePlugin = {
       id: `${MITS_PLUGIN_ID}-stations`,
       title: () => t('realtime_head', getLocaleCode()),
       dock: 'replace-style',
-      defaultWidth: 320,
+      defaultWidth: 288,
       render: (container) => {
         container.innerHTML = '<div style="padding:16px;color:#94a3b8;font-size:13px;">Loading station list...</div>';
         import('./panels/station-list').then(({ renderStationListPanel }) => {
@@ -165,6 +168,8 @@ export const mitsPlugin: GeoLibrePlugin = {
     registerMapLayers(app);
 
     registerPanel('station-list', () => app.openRightPanel?.(`${MITS_PLUGIN_ID}-stations`), () => app.closeRightPanel?.(`${MITS_PLUGIN_ID}-stations`));
+
+    registerPanel('public-summary', () => openPublicSummary(app), () => closePublicSummary());
 
     registerPanel('dam-status', () => {
       openFloatingPanel(app, 'mits-dam-status', 'dam_stage_title', 700, (container) => {
@@ -252,6 +257,7 @@ export const mitsPlugin: GeoLibrePlugin = {
     rightPanelDisposer = null;
     floatingPanelDisposers.forEach((d) => d());
     floatingPanelDisposers = [];
+    disposeStationDetail();
     unsubscribeLocale?.();
     unsubscribeLocale = null;
     removeMapLayers(app);
