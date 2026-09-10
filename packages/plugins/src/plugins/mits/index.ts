@@ -165,6 +165,9 @@ export const mitsPlugin: GeoLibrePlugin = {
       },
     }) ?? null;
 
+    app.openRightPanel?.(`${MITS_PLUGIN_ID}-stations`);
+    app.collapseRightPanel?.(`${MITS_PLUGIN_ID}-stations`);
+
     registerMapLayers(app);
 
     registerPanel('station-list', () => app.openRightPanel?.(`${MITS_PLUGIN_ID}-stations`), () => app.closeRightPanel?.(`${MITS_PLUGIN_ID}-stations`));
