@@ -156,6 +156,7 @@ export const mitsPlugin: GeoLibrePlugin = {
       title: () => t('realtime_head', getLocaleCode()),
       dock: 'replace-style',
       defaultWidth: 288,
+      persistent: true,
       render: (container) => {
         container.innerHTML = '<div style="padding:16px;color:#94a3b8;font-size:13px;">Loading station list...</div>';
         import('./panels/station-list').then(({ renderStationListPanel }) => {

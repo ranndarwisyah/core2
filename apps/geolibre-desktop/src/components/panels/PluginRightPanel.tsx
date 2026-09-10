@@ -305,7 +305,14 @@ export function PluginRightPanel({ dock, contentEl, width, onWidthChange }: Plug
               className="h-7 w-7"
               title={t("pluginPanel.close")}
               aria-label={t("pluginPanel.close")}
-              onClick={() => closeRightPanel(activeId)}
+              onClick={() => {
+                const panel = getRightPanel(activeId);
+                if (panel?.persistent) {
+                  collapseRightPanel(activeId);
+                } else {
+                  closeRightPanel(activeId);
+                }
+              }}
             >
               <X className="h-4 w-4" />
             </Button>
