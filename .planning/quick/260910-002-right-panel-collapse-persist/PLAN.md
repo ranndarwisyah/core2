@@ -1,6 +1,6 @@
 ---
 slug: right-panel-collapse-persist
-status: in-progress
+status: done
 date: 2026-09-10
 branch: quick/nav-panel-fixes
 type: execute

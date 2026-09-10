@@ -58,5 +58,6 @@ Phase 1 of 1 (Milestone 1: Core Plugin)
 | 260908-004 | Map secondary panel: single toolbar row with MITS views (Station Location Map + Muda Area Plan + MADA Quality System + Contact Us) | 2026-09-08 | cab8f4db | [260908-004-map-secondary-panel-items](./quick/260908-004-map-secondary-panel-items/) |
 | 260909-001 | Real-time right panel (Stations/Alerts tabs), floating station detail panel, public summary full overlay with CSV/PDF export | 2026-09-09 | 2e8dbb24 | [260909-001-right-panel](./quick/260909-001-right-panel/) |
 | 260910-001 | Fix invisible realtime right panel — open + collapse MITS panel on activate so the 44px "REAL-TIME" rail always renders | 2026-09-10 | 84739bb6 | [260910-001-fix-right-panel-visibility](./quick/260910-001-fix-right-panel-visibility/) |
+| 260910-002 | Persistent right panel rail — X on a `persistent` panel collapses to the rail entry (REAL-TIME) instead of closing; non-persistent panels unchanged | 2026-09-10 | 6401e8d7 | [260910-002-right-panel-collapse-persist](./quick/260910-002-right-panel-collapse-persist/) |
 
-Last activity: 2026-09-10 - Completed quick task 260910-001: realtime right panel rail visible on load (collapsed)
+Last activity: 2026-09-10 - Completed quick task 260910-002: MITS right panel X now collapses to the rail so "REAL-TIME" always stays reopenable from the side
