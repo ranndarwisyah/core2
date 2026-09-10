@@ -980,6 +980,15 @@ export interface GeoLibreRightPanelRegistration {
    */
   deactivatePluginOnClose?: boolean;
   /**
+   * When true, the host's close control (the × button in the panel header)
+   * collapses the panel to its rail entry instead of fully removing it, so the
+   * panel always remains reopenable from the side rail. Use for panels whose
+   * rail presence is the user's primary way of returning to them (e.g. a
+   * real-time monitoring panel). Non-persistent panels close fully and their
+   * rail entry is removed. Displacement by another panel is unaffected.
+   */
+  persistent?: boolean;
+  /**
    * Populate the panel body. Called once with an empty container when the panel
    * first becomes active; the plugin appends its own DOM. The container is kept
    * mounted across collapse so plugin state persists. May return a cleanup
